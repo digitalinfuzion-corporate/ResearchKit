@@ -1060,12 +1060,13 @@ static const CGFloat HorizontalMargin = 15.0;
 
 @implementation ORKFormItemPickerCell {
     id<ORKPicker> _picker;
+    UIToolbar *_toolbar;
 }
 
 
 - (void)setFormItem:(ORKFormItem *)formItem {
     ORKAnswerFormat *answerFormat = formItem.impliedAnswerFormat;
-    
+
     if (!(!formItem ||
           [answerFormat isKindOfClass:[ORKDateAnswerFormat class]] ||
           [answerFormat isKindOfClass:[ORKTimeOfDayAnswerFormat class]] ||
@@ -1092,21 +1093,46 @@ static const CGFloat HorizontalMargin = 15.0;
         ORKAnswerFormat *answerFormat = [self.formItem impliedAnswerFormat];
         _picker = [ORKPicker pickerWithAnswerFormat:answerFormat answer:self.answer delegate:self];
     }
-    
+
     return _picker;
+}
+
+- (UIToolbar *)toolBar {
+    if (_toolbar == nil) {
+        _toolbar = [UIToolbar new];
+        _toolbar.barStyle = UIBarStyleDefault;
+        _toolbar.translucent = true;
+        [_toolbar sizeToFit];
+
+        UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                              target:self
+                                                                              action:@selector(donePicker:)];
+        UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                               target:nil
+                                                                               action:nil];
+        // TODO: Add previous/next items?
+        [_toolbar setItems:@[space, done]];
+        [_toolbar setUserInteractionEnabled:YES];
+    }
+
+    return _toolbar;
+}
+
+- (void)donePicker:(UIBarButtonItem *)sender {
+    [self.textField resignFirstResponder];
 }
 
 - (void)inputValueDidChange {
     if (!_picker) {
         return;
     }
-    
+
     self.textField.text = [_picker selectedLabelText];
-    
+
     [self ork_setAnswer:_picker.answer];
-    
+
     [self.textField setSelectedTextRange:nil];
-    
+
     [super inputValueDidChange];
 }
 
@@ -1120,13 +1146,13 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
     dispatch_async(dispatch_get_main_queue(), ^{
-        
+
         // hide keyboard
         [textField resignFirstResponder];
-        
+
         // clear value
         [self inputValueDidClear];
-        
+
         // reset picker
         [self answerDidChange];
     });
@@ -1135,15 +1161,19 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     BOOL shouldBeginEditing = [super textFieldShouldBeginEditing:textField];
-    
+
     if (shouldBeginEditing) {
         if (self.textFieldView.inputView == nil) {
             self.textField.inputView = self.picker.pickerView;
         }
-        
+
+        if (self.textFieldView.inputAccessoryView == nil) {
+            self.textField.inputAccessoryView = self.toolBar;
+        }
+
         [self.picker pickerWillAppear];
     }
-    
+
     return shouldBeginEditing;
 }
 
