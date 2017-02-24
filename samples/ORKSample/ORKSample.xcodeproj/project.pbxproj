@@ -251,6 +251,7 @@
 				TargetAttributes = {
 					161479BF1BD6CE8F0099A068 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 9QK6RBM7S7;
 						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.HealthKit = {
@@ -438,6 +439,7 @@
 				CODE_SIGN_ENTITLEMENTS = ORKSample/ORKSample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9QK6RBM7S7;
 				INFOPLIST_FILE = "$(SRCROOT)/ORKSample/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.Sample";
@@ -454,6 +456,7 @@
 				CODE_SIGN_ENTITLEMENTS = ORKSample/ORKSample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9QK6RBM7S7;
 				INFOPLIST_FILE = "$(SRCROOT)/ORKSample/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.Sample";
