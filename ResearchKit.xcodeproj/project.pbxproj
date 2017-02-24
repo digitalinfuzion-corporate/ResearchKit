@@ -548,6 +548,12 @@
 		D442397E1AF17F7600559D96 /* ORKImageCaptureStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D442397C1AF17F7600559D96 /* ORKImageCaptureStepViewController.m */; };
 		D458520A1AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.h in Headers */ = {isa = PBXBuildFile; fileRef = D45852081AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.h */; };
 		D458520B1AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = D45852091AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.m */; };
+		F4D176E51E5FF4650017B251 /* ORKFileImportStep.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D176DF1E5FF4650017B251 /* ORKFileImportStep.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F4D176E61E5FF4650017B251 /* ORKFileImportStep.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D176E01E5FF4650017B251 /* ORKFileImportStep.m */; };
+		F4D176E71E5FF4650017B251 /* ORKFileImportStepViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D176E11E5FF4650017B251 /* ORKFileImportStepViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F4D176E81E5FF4650017B251 /* ORKFileImportStepViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D176E21E5FF4650017B251 /* ORKFileImportStepViewController.m */; };
+		F4D176E91E5FF4650017B251 /* ORKFileImportStepView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D176E31E5FF4650017B251 /* ORKFileImportStepView.h */; };
+		F4D176EA1E5FF4650017B251 /* ORKFileImportStepView.m in Sources */ = {isa = PBXBuildFile; fileRef = F4D176E41E5FF4650017B251 /* ORKFileImportStepView.m */; };
 		FA7A9D2B1B082688005A2BEA /* ORKConsentDocumentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7A9D2A1B082688005A2BEA /* ORKConsentDocumentTests.m */; };
 		FA7A9D2F1B083DD3005A2BEA /* ORKConsentSectionFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7A9D2D1B083DD3005A2BEA /* ORKConsentSectionFormatter.h */; };
 		FA7A9D301B083DD3005A2BEA /* ORKConsentSectionFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7A9D2E1B083DD3005A2BEA /* ORKConsentSectionFormatter.m */; };
@@ -1162,6 +1168,12 @@
 		D442397C1AF17F7600559D96 /* ORKImageCaptureStepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKImageCaptureStepViewController.m; sourceTree = "<group>"; };
 		D45852081AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORKImageCaptureCameraPreviewView.h; sourceTree = "<group>"; };
 		D45852091AF6CCFA00A2DE13 /* ORKImageCaptureCameraPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKImageCaptureCameraPreviewView.m; sourceTree = "<group>"; };
+		F4D176DF1E5FF4650017B251 /* ORKFileImportStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORKFileImportStep.h; sourceTree = "<group>"; };
+		F4D176E01E5FF4650017B251 /* ORKFileImportStep.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKFileImportStep.m; sourceTree = "<group>"; };
+		F4D176E11E5FF4650017B251 /* ORKFileImportStepViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORKFileImportStepViewController.h; sourceTree = "<group>"; };
+		F4D176E21E5FF4650017B251 /* ORKFileImportStepViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKFileImportStepViewController.m; sourceTree = "<group>"; };
+		F4D176E31E5FF4650017B251 /* ORKFileImportStepView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORKFileImportStepView.h; sourceTree = "<group>"; };
+		F4D176E41E5FF4650017B251 /* ORKFileImportStepView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKFileImportStepView.m; sourceTree = "<group>"; };
 		FA7A9D2A1B082688005A2BEA /* ORKConsentDocumentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKConsentDocumentTests.m; sourceTree = "<group>"; };
 		FA7A9D2D1B083DD3005A2BEA /* ORKConsentSectionFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORKConsentSectionFormatter.h; sourceTree = "<group>"; };
 		FA7A9D2E1B083DD3005A2BEA /* ORKConsentSectionFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORKConsentSectionFormatter.m; sourceTree = "<group>"; };
@@ -1791,6 +1803,7 @@
 				86C40B771A8D7C5C00081FAC /* ORKCustomStepView.h */,
 				86C40B781A8D7C5C00081FAC /* ORKCustomStepView.m */,
 				86C40B791A8D7C5C00081FAC /* ORKCustomStepView_Internal.h */,
+				F4D176EB1E5FF4690017B251 /* File Import Step */,
 				B12EFF351AB2116400A80147 /* Instruction Step */,
 				B12EFF361AB2117B00A80147 /* Question Step */,
 				B12EFF3C1AB211FB00A80147 /* Form Step */,
@@ -2442,6 +2455,19 @@
 			name = "Image Capture Step";
 			sourceTree = "<group>";
 		};
+		F4D176EB1E5FF4690017B251 /* File Import Step */ = {
+			isa = PBXGroup;
+			children = (
+				F4D176DF1E5FF4650017B251 /* ORKFileImportStep.h */,
+				F4D176E01E5FF4650017B251 /* ORKFileImportStep.m */,
+				F4D176E11E5FF4650017B251 /* ORKFileImportStepViewController.h */,
+				F4D176E21E5FF4650017B251 /* ORKFileImportStepViewController.m */,
+				F4D176E31E5FF4650017B251 /* ORKFileImportStepView.h */,
+				F4D176E41E5FF4650017B251 /* ORKFileImportStepView.m */,
+			);
+			name = "File Import Step";
+			sourceTree = "<group>";
+		};
 		FA7A9D2C1B083D90005A2BEA /* Formatters */ = {
 			isa = PBXGroup;
 			children = (
@@ -2700,6 +2726,7 @@
 				86C40D281A8D7C5C00081FAC /* ORKFormTextView.h in Headers */,
 				86C40DEE1A8D7C5C00081FAC /* UIResponder+ResearchKit.h in Headers */,
 				86C40E041A8D7C5C00081FAC /* ORKConsentLearnMoreViewController.h in Headers */,
+				F4D176E91E5FF4650017B251 /* ORKFileImportStepView.h in Headers */,
 				25ECC09B1AFBD8B300F3D63B /* ORKReactionTimeViewController.h in Headers */,
 				86C40D061A8D7C5C00081FAC /* ORKCountdownLabel.h in Headers */,
 				86C40C2A1A8D7C5C00081FAC /* ORKFitnessContentView.h in Headers */,
@@ -2710,6 +2737,7 @@
 				2489F7B31D65214D008DEF20 /* ORKVideoCaptureStepViewController.h in Headers */,
 				86C40E0C1A8D7C5C00081FAC /* ORKConsentReviewStepViewController.h in Headers */,
 				86C40C321A8D7C5C00081FAC /* ORKFitnessStepViewController.h in Headers */,
+				F4D176E71E5FF4650017B251 /* ORKFileImportStepViewController.h in Headers */,
 				FF5CA6121D2C2670001660A3 /* ORKTableStep.h in Headers */,
 				BCC1CD9A1B7ED64F00D86886 /* ORKYAxisView.h in Headers */,
 				86C40DBE1A8D7C5C00081FAC /* ORKTableViewCell.h in Headers */,
@@ -2761,6 +2789,7 @@
 				10864C9E1B27146B000F4158 /* ORKPSATStep.h in Headers */,
 				86C40D6E1A8D7C5C00081FAC /* ORKResult_Private.h in Headers */,
 				86C40D161A8D7C5C00081FAC /* ORKErrors.h in Headers */,
+				F4D176E51E5FF4650017B251 /* ORKFileImportStep.h in Headers */,
 				866DA5291D63D04700C9AF3F /* ORKOperation.h in Headers */,
 				861D11B51AA7D073003C98A7 /* ORKTextChoiceCellGroup.h in Headers */,
 				24BC5CEE1BC345D900846B43 /* ORKLoginStep.h in Headers */,
@@ -3116,6 +3145,7 @@
 				86C40DC01A8D7C5C00081FAC /* ORKTableViewCell.m in Sources */,
 				24A4DA111B8D0F21009C797A /* ORKPasscodeStepView.m in Sources */,
 				BC41942A1AE8453A00073D6B /* ORKObserver.m in Sources */,
+				F4D176EA1E5FF4650017B251 /* ORKFileImportStepView.m in Sources */,
 				86C40C681A8D7C5C00081FAC /* CMAccelerometerData+ORKJSONDictionary.m in Sources */,
 				86C40C701A8D7C5C00081FAC /* CMMotionActivity+ORKJSONDictionary.m in Sources */,
 				147503B01AEE8071004B17F3 /* ORKAudioGenerator.m in Sources */,
@@ -3185,6 +3215,7 @@
 				BF9155A01BDE8D7E007FA459 /* ORKReviewStepViewController.m in Sources */,
 				86C40E261A8D7C5C00081FAC /* ORKEAGLMoviePlayerView.m in Sources */,
 				86C40CC21A8D7C5C00081FAC /* ORKCompletionStep.m in Sources */,
+				F4D176E81E5FF4650017B251 /* ORKFileImportStepViewController.m in Sources */,
 				86C40C301A8D7C5C00081FAC /* ORKFitnessStep.m in Sources */,
 				86C40C501A8D7C5C00081FAC /* ORKTappingContentView.m in Sources */,
 				24A4DA191B8D13FE009C797A /* ORKPasscodeStepViewController.m in Sources */,
@@ -3193,6 +3224,7 @@
 				86C40C441A8D7C5C00081FAC /* ORKSpatialSpanMemoryStep.m in Sources */,
 				BCB080A11B83EFB900A3F400 /* ORKStepNavigationRule.swift in Sources */,
 				24898B0E1B7186C000B0E7E7 /* ORKScaleRangeImageView.m in Sources */,
+				F4D176E61E5FF4650017B251 /* ORKFileImportStep.m in Sources */,
 				86C40DD81A8D7C5C00081FAC /* ORKUnitLabel.m in Sources */,
 				86C40D361A8D7C5C00081FAC /* ORKHelpers.m in Sources */,
 				86C40C181A8D7C5C00081FAC /* ORKAudioContentView.m in Sources */,
