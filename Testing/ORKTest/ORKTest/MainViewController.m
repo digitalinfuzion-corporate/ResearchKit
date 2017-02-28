@@ -279,7 +279,12 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+//    let bob = ORKFileImportStep(identifier: "step", documentTypes: ["public.pdf"])
+//    print(bob)
+    ORKFileImportStep *bob = [[ORKFileImportStep alloc] initWithIdentifier:@"bob" documentTypes:@[@"public.pdf"]];
+    NSLog(@"%@", bob);
+
     _savedViewControllers = [NSMutableDictionary new];
     
     UICollectionViewFlowLayout *flowLayout = [UICollectionViewFlowLayout new];
