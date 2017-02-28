@@ -176,7 +176,7 @@ static const NSString *FormattedAddressLines = @"FormattedAddressLines";
     annotation.coordinate = touchMapCoordinate;
     [_mapView addAnnotation:annotation];
     
-    ORKLocation *pinLocation = [[ORKLocation alloc] initWithCoordinate:touchMapCoordinate region:nil userInput:nil addressDictionary:nil];
+    ORKLocation *pinLocation = [[ORKLocation alloc] initWithCoordinate:touchMapCoordinate region:nil userInput:nil addressDictionary:@{}];
     [self setAnswer:pinLocation];
 }
 

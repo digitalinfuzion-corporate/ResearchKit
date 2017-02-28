@@ -279,7 +279,7 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     _savedViewControllers = [NSMutableDictionary new];
     
     UICollectionViewFlowLayout *flowLayout = [UICollectionViewFlowLayout new];
