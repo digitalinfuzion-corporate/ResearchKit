@@ -39,13 +39,13 @@
 #import "ORKFileImportStep.h"
 #import "ORKHelpers_Internal.h"
 
-@interface PDFView : UIView
+@interface ORKPDFView : UIView
 
 @property (nullable, nonatomic, copy) NSURL *url;
 
 @end
 
-@implementation PDFView {
+@implementation ORKPDFView {
 
 }
 
@@ -113,9 +113,9 @@
 
 }
 
-- (PDFView *)pdfView {
+- (ORKPDFView *)pdfView {
     // TODO: fix magic numbers here
-    return (PDFView *)[[self.stepView subviews] objectAtIndex:0];
+    return (ORKPDFView *)[[self.stepView subviews] objectAtIndex:0];
 }
 
 - (UILabel *)label {
@@ -139,7 +139,7 @@
     self.step = step;
     _target = target;
 
-    PDFView *pdf = [PDFView new];
+    ORKPDFView *pdf = [ORKPDFView new];
 
     ORKBorderedButton *choose = [ORKBorderedButton buttonWithType:UIButtonTypeCustom];
     [choose setTitle:self.step.selectButtonTitle forState:UIControlStateNormal];
