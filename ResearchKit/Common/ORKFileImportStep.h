@@ -54,6 +54,8 @@ ORK_CLASS_AVAILABLE
 @property (nonatomic, readwrite, copy) NSString *selectButtonTitle;
 @property (nonatomic, readwrite, copy) NSString *reselectButtonTitle;
 
++ (instancetype)makePDFImportStepWithIdentifier:(NSString *)identifier;
+
 @end
 
 NS_ASSUME_NONNULL_END
