@@ -188,7 +188,8 @@
 
     [NSLayoutConstraint activateConstraints:constraints];
 
-    self.headerView.instructionLabel.text = step.title;
+    self.headerView.captionLabel.text = step.title;
+    self.headerView.instructionLabel.text = step.text;
 }
 
 - (IBAction)openPicker:(id)sender {

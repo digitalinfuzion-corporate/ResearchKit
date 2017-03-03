@@ -34,9 +34,16 @@
 #import "ORKHelpers_Internal.h"
 
 #import "ORKStepViewController_Internal.h"
+#import "ORKNavigationContainerView_Internal.h"
 
 #import "ORKFileImportStepView.h"
 #import "ORKResult.h"
+
+#if TARGET_OS_IPHONE
+#import <MobileCoreServices/MobileCoreServices.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
 
 
 @interface ORKFileImportStepViewController () <UIDocumentPickerDelegate>
@@ -65,7 +72,12 @@
     if (!_fileURL) { return [super result]; }
     ORKFileResult *result = [[ORKFileResult alloc] initWithIdentifier:self.step.identifier];
     result.fileURL = _fileURL;
-    result.contentType = @"application/pdf"; // TODO: Fix This for appropriate types
+
+    CFStringRef fileExtension = (__bridge CFStringRef)[_fileURL pathExtension];
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileExtension, NULL);
+    CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass(UTI, kUTTagClassMIMEType);
+    CFRelease(UTI);
+    result.contentType = (__bridge_transfer NSString *)MIMEType;
 
     return [[ORKStepResult alloc] initWithStepIdentifier:self.step.identifier results:@[result]];
 }
@@ -106,13 +118,18 @@
         self.stepView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.view addSubview:self.stepView];
 
+        ORKNavigationContainerView *_continueSkip = self.stepView.continueSkipContainer;
+
         self.stepView.headerView.learnMoreButtonItem = self.learnMoreButtonItem;
-        self.stepView.continueSkipContainer.hidden = self.isBeingReviewed;
-        self.stepView.continueSkipContainer.skipEnabled = NO;
+        _continueSkip.hidden = self.isBeingReviewed;
+        _continueSkip.skipEnabled = NO;
 
         self.continueButtonTitle = [self hasNextStep] ? @"Next" : @"Done";
 
-        self.stepView.continueSkipContainer.continueButtonItem = self.continueButtonItem;
+        _continueSkip.continueButtonItem = self.continueButtonItem;
+        _continueSkip.skipButtonItem = self.skipButtonItem;
+        _continueSkip.skipEnabled = self.step.isOptional;
+        _continueSkip.optional = self.step.isOptional;
 
         [self.stepView setFileImportStep:self.fileImportStep target:self];
 

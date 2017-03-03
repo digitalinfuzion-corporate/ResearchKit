@@ -44,6 +44,10 @@
 
 @implementation ORKFileImportStep
 
++ (instancetype)makePDFImportStepWithIdentifier:(NSString *)identifier {
+    return [[self alloc] initWithIdentifier:identifier documentTypes:@[@"public.pdf", @"com.adobe.pdf"]];
+}
+
 + (Class)stepViewControllerClass {
     return [ORKFileImportStepViewController class];
 }
@@ -64,7 +68,7 @@
 
         self.selectButtonTitle = @"Select a File";
         self.reselectButtonTitle = @"Select a Different File";
-        self.title = @"Select a PDF by tapping the button below.";
+        self.text = @"Select a PDF by tapping the button below.";
     }
     return self;
 }
