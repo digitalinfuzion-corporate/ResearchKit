@@ -39,6 +39,12 @@
 #import "ORKFileImportStepView.h"
 #import "ORKResult.h"
 
+#if TARGET_OS_IPHONE
+#import <MobileCoreServices/MobileCoreServices.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
+
 
 @interface ORKFileImportStepViewController () <UIDocumentPickerDelegate>
 
@@ -66,7 +72,12 @@
     if (!_fileURL) { return [super result]; }
     ORKFileResult *result = [[ORKFileResult alloc] initWithIdentifier:self.step.identifier];
     result.fileURL = _fileURL;
-    result.contentType = @"application/pdf"; // TODO: Fix This for appropriate types
+
+    CFStringRef fileExtension = (__bridge CFStringRef)[_fileURL pathExtension];
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileExtension, NULL);
+    CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass(UTI, kUTTagClassMIMEType);
+    CFRelease(UTI);
+    result.contentType = (__bridge_transfer NSString *)MIMEType;
 
     return [[ORKStepResult alloc] initWithStepIdentifier:self.step.identifier results:@[result]];
 }
@@ -117,6 +128,7 @@
 
         _continueSkip.continueButtonItem = self.continueButtonItem;
         _continueSkip.skipButtonItem = self.skipButtonItem;
+        _continueSkip.skipEnabled = self.step.isOptional;
         _continueSkip.optional = self.step.isOptional;
 
         [self.stepView setFileImportStep:self.fileImportStep target:self];
