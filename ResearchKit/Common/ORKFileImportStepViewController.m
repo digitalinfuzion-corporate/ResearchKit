@@ -34,6 +34,7 @@
 #import "ORKHelpers_Internal.h"
 
 #import "ORKStepViewController_Internal.h"
+#import "ORKNavigationContainerView_Internal.h"
 
 #import "ORKFileImportStepView.h"
 #import "ORKResult.h"
@@ -106,13 +107,17 @@
         self.stepView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.view addSubview:self.stepView];
 
+        ORKNavigationContainerView *_continueSkip = self.stepView.continueSkipContainer;
+
         self.stepView.headerView.learnMoreButtonItem = self.learnMoreButtonItem;
-        self.stepView.continueSkipContainer.hidden = self.isBeingReviewed;
-        self.stepView.continueSkipContainer.skipEnabled = NO;
+        _continueSkip.hidden = self.isBeingReviewed;
+        _continueSkip.skipEnabled = NO;
 
         self.continueButtonTitle = [self hasNextStep] ? @"Next" : @"Done";
 
-        self.stepView.continueSkipContainer.continueButtonItem = self.continueButtonItem;
+        _continueSkip.continueButtonItem = self.continueButtonItem;
+        _continueSkip.skipButtonItem = self.skipButtonItem;
+        _continueSkip.optional = self.step.isOptional;
 
         [self.stepView setFileImportStep:self.fileImportStep target:self];
 
