@@ -270,16 +270,14 @@ static const CGFloat HorizontalMargin = 15.0;
     NSIndexPath *current = [self.parentTableView indexPathForCell:self];
 
 
-    UIBarButtonItem *next = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrowRight" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil]
-                                                             style:UIBarButtonItemStylePlain
-                                                            target:self
-                                                            action:@selector(nextResponder:)];
+    UIBarButtonItem *next = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:102 // undocumented ">" character
+                                                                          target:self
+                                                                          action:@selector(nextResponder:)];
     next.width = 24;
 
-    UIBarButtonItem *prev = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrowLeft" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil]
-                                                             style:UIBarButtonItemStylePlain
-                                                            target:self
-                                                            action:@selector(prevResponder:)];
+    UIBarButtonItem *prev = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:101 // undocumented "<" character
+                                                                          target:self
+                                                                          action:@selector(prevResponder:)];
     prev.width = 24;
 
     [toolbar setItems:@[fixed, prev, next, flex, done]];
