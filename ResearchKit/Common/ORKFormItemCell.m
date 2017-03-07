@@ -74,10 +74,17 @@ static const CGFloat HorizontalMargin = 15.0;
 
 @end
 
+@interface UITableView (ORKFormCellItemNavigation)
+
+- (nullable NSIndexPath *)nextIndexPathForIndexPath:(NSIndexPath *)indexPath;
+- (nullable NSIndexPath *)previousIndexPathForIndexPath:(NSIndexPath *)indexPath;
+
+@end
 
 @interface ORKSegmentedControl : UISegmentedControl
 
 @end
+
 
 
 @implementation ORKSegmentedControl
@@ -99,10 +106,18 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (void)showValidityAlertWithMessage:(NSString *)text;
 
+- (nullable UIToolbar *)toolbar;
+
 @end
 
 
-@implementation ORKFormItemCell
+@implementation ORKFormItemCell {
+    UIToolbar *_toolbar;
+}
+
+- (nullable UIToolbar *)toolbar {
+    return _toolbar;
+}
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier
                                formItem:(ORKFormItem *)formItem
@@ -122,7 +137,7 @@ static const CGFloat HorizontalMargin = 15.0;
         _labelLabel.text = formItem.text;
         _labelLabel.numberOfLines = 0;
         [self.contentView addSubview:_labelLabel];
-        
+        _toolbar = [self makeToolbar];
         [self cellInit];
         [self setAnswer:_answer];
     }
@@ -199,13 +214,13 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (BOOL)becomeFirstResponder {
     // Subclasses should override this
-    return YES;
+    [self updateToolbar];
+    return [super becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder {
-    [super resignFirstResponder];
     // Subclasses should override this
-    return YES;
+    return [super resignFirstResponder];;
 }
 
 - (void)prepareForReuse {
@@ -232,6 +247,90 @@ static const CGFloat HorizontalMargin = 15.0;
     [self.delegate formItemCell:self invalidInputAlertWithTitle:title message:message];
 }
 
+
+#pragma mark Accessory View
+
+- (UIToolbar *)makeToolbar {
+    UIToolbar *toolbar = [UIToolbar new];
+    toolbar.barStyle = UIBarStyleDefault;
+    toolbar.translucent = true;
+    [toolbar sizeToFit];
+
+    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                          target:self
+                                                                          action:@selector(doneResponder:)];
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                          target:nil
+                                                                          action:nil];
+    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                           target:nil
+                                                                           action:nil];
+    fixed.width = 12;
+
+    NSIndexPath *current = [self.parentTableView indexPathForCell:self];
+
+
+    UIBarButtonItem *next = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrowRight" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil]
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(nextResponder:)];
+    next.width = 24;
+
+    UIBarButtonItem *prev = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrowLeft" inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil]
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(prevResponder:)];
+    prev.width = 24;
+
+    [toolbar setItems:@[fixed, prev, next, flex, done]];
+    [toolbar setUserInteractionEnabled:YES];
+
+    return toolbar;
+}
+
+- (void)updateToolbar {
+    NSIndexPath *current = [self.parentTableView indexPathForCell:self];
+
+
+    UIBarButtonItem *next = self.toolbar.items[2];
+    next.enabled = (current.section+1 < self.parentTableView.numberOfSections ||
+                    current.row+1 < [self.parentTableView numberOfRowsInSection: current.section]);
+
+    UIBarButtonItem *prev = self.toolbar.items[1];
+    prev.enabled = current.section > 0 || (current.section >= 0 && current.row > 0);
+
+}
+
+- (IBAction)doneResponder:(UIBarButtonItem *)sender {
+    [self advanceToCellAtIndexPath:nil];
+}
+
+- (IBAction)prevResponder:(UIBarButtonItem *)sender {
+    NSIndexPath *current = [self.parentTableView indexPathForCell:self];
+    NSIndexPath *prev = [self.parentTableView previousIndexPathForIndexPath:current];
+
+    [self advanceToCellAtIndexPath:prev];
+}
+
+- (IBAction)nextResponder:(UIBarButtonItem *)sender {
+    NSIndexPath *current = [self.parentTableView indexPathForCell:self];
+    NSIndexPath *next = [self.parentTableView nextIndexPathForIndexPath:current];
+
+    [self advanceToCellAtIndexPath:next];
+}
+
+- (void)advanceToCellAtIndexPath:(nullable NSIndexPath *)indexPath {
+    if (!indexPath) {
+        [self resignFirstResponder];
+        return;
+    }
+
+    UITableViewCell *cell = [self.parentTableView cellForRowAtIndexPath:indexPath];
+    if (![cell becomeFirstResponder]) {
+        [self.parentTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [self resignFirstResponder];
+    }
+}
 @end
 
 
@@ -288,7 +387,8 @@ static const CGFloat HorizontalMargin = 15.0;
     
     self.labelLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _textFieldView.translatesAutoresizingMaskIntoConstraints = NO;
-    
+    _textFieldView.textField.inputAccessoryView = self.toolbar;
+
     [self setUpContentConstraint];
     [self setNeedsUpdateConstraints];
 }
@@ -468,6 +568,7 @@ static const CGFloat HorizontalMargin = 15.0;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self updateToolbar];
     // Ask table view to adjust scrollview's position
     self.editingHighlight = YES;
     [self.delegate formItemCellDidBecomeFirstResponder:self];
@@ -760,12 +861,20 @@ static const CGFloat HorizontalMargin = 15.0;
     _textView.textAlignment = NSTextAlignmentNatural;
     _textView.scrollEnabled = NO;
     _textView.placeholder = self.formItem.placeholder;
+    _textView.inputAccessoryView = self.toolbar;
     
     [self applyAnswerFormat];
     [self answerDidChange];
     
     [self.contentView addSubview:_textView];
     [self setUpConstraints];
+
+
+
+}
+
+- (nullable ORKFormTextView *)textView {
+    return _textView;
 }
 
 - (void)setUpConstraints {
@@ -875,6 +984,7 @@ static const CGFloat HorizontalMargin = 15.0;
         textView.text = nil;
         textView.textColor = [UIColor blackColor];
     }
+    [self updateToolbar];
     // Ask table view to adjust scrollview's position
     [self.delegate formItemCellDidBecomeFirstResponder:self];
 }
@@ -1060,7 +1170,6 @@ static const CGFloat HorizontalMargin = 15.0;
 
 @implementation ORKFormItemPickerCell {
     id<ORKPicker> _picker;
-    UIToolbar *_toolbar;
 }
 
 
@@ -1097,30 +1206,6 @@ static const CGFloat HorizontalMargin = 15.0;
     return _picker;
 }
 
-- (UIToolbar *)toolBar {
-    if (_toolbar == nil) {
-        _toolbar = [UIToolbar new];
-        _toolbar.barStyle = UIBarStyleDefault;
-        _toolbar.translucent = true;
-        [_toolbar sizeToFit];
-
-        UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                              target:self
-                                                                              action:@selector(donePicker:)];
-        UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                               target:nil
-                                                                               action:nil];
-        // TODO: Add previous/next items?
-        [_toolbar setItems:@[space, done]];
-        [_toolbar setUserInteractionEnabled:YES];
-    }
-
-    return _toolbar;
-}
-
-- (void)donePicker:(UIBarButtonItem *)sender {
-    [self.textField resignFirstResponder];
-}
 
 - (void)inputValueDidChange {
     if (!_picker) {
@@ -1165,10 +1250,6 @@ static const CGFloat HorizontalMargin = 15.0;
     if (shouldBeginEditing) {
         if (self.textFieldView.inputView == nil) {
             self.textField.inputView = self.picker.pickerView;
-        }
-
-        if (self.textFieldView.inputAccessoryView == nil) {
-            self.textField.inputAccessoryView = self.toolBar;
         }
 
         [self.picker pickerWillAppear];
@@ -1292,6 +1373,27 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (BOOL)resignFirstResponder {
     return [_selectionView resignFirstResponder];
+}
+
+@end
+
+
+@implementation UITableView (ORKFormCellItemNavigation)
+
+- (nullable NSIndexPath *)nextIndexPathForIndexPath:(NSIndexPath *)indexPath {
+    BOOL isLastInSection = indexPath.row+1 >= [self numberOfRowsInSection: indexPath.section];
+    NSInteger section = isLastInSection ? indexPath.section + 1 : indexPath.section;
+    NSInteger row = isLastInSection ? 0 : indexPath.row + 1;
+    NSIndexPath *next = [NSIndexPath indexPathForRow:row inSection:section];
+    return next;
+}
+
+- (nullable NSIndexPath *)previousIndexPathForIndexPath:(NSIndexPath *)indexPath {
+    BOOL isFirstInSection = indexPath.row == 0;
+    NSInteger section = isFirstInSection ? indexPath.section - 1 : indexPath.section;
+    NSInteger row = isFirstInSection ? [self numberOfRowsInSection:section] - 1 : indexPath.row - 1;
+    NSIndexPath *prev = [NSIndexPath indexPathForRow:row inSection:section];
+    return prev;
 }
 
 @end
