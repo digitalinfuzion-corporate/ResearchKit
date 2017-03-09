@@ -45,7 +45,7 @@
 @implementation ORKFileImportStep
 
 + (instancetype)makePDFImportStepWithIdentifier:(NSString *)identifier {
-    return [[self alloc] initWithIdentifier:identifier documentTypes:@[@"public.pdf", @"com.adobe.pdf"]];
+    return [[self alloc] initWithIdentifier:identifier documentTypes:@[@"com.adobe.pdf"]];
 }
 
 + (Class)stepViewControllerClass {
