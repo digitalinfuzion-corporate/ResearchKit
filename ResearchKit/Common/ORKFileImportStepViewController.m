@@ -153,7 +153,18 @@
 #pragma mark - <UIDocumentPickerDelegate>
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url {
-    _fileURL = url;
+    NSFileManager *manager = [NSFileManager new];
+    NSString *fileName = [url lastPathComponent];
+    NSString *base = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSURL *destination = [NSURL fileURLWithPath:[base stringByAppendingPathComponent:fileName]];
+    NSError *error;
+    [manager removeItemAtURL:destination error:nil];
+    if (![manager copyItemAtURL:url toURL:destination error:&error]) {
+        NSLog(@"%@", error);
+        _fileURL = nil;
+        return;
+    }
+    _fileURL = destination;
     [self renderPDF];
 
 }
