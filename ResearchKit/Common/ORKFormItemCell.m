@@ -265,22 +265,22 @@ static const CGFloat HorizontalMargin = 15.0;
     UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                                                            target:nil
                                                                            action:nil];
-    fixed.width = 12;
+    fixed.width = 4;
 
     NSIndexPath *current = [self.parentTableView indexPathForCell:self];
 
 
-    UIBarButtonItem *next = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:102 // undocumented ">" character
+    UIBarButtonItem *next = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:104 // undocumented "^" character
                                                                           target:self
                                                                           action:@selector(nextResponder:)];
-    next.width = 24;
+    next.width = 30;
 
-    UIBarButtonItem *prev = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:101 // undocumented "<" character
+    UIBarButtonItem *prev = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:103 // undocumented "v" character
                                                                           target:self
                                                                           action:@selector(prevResponder:)];
-    prev.width = 24;
+    prev.width = 30;
 
-    [toolbar setItems:@[fixed, prev, next, flex, done]];
+    [toolbar setItems:@[prev, fixed, next, flex, done]];
     [toolbar setUserInteractionEnabled:YES];
 
     return toolbar;
@@ -294,7 +294,7 @@ static const CGFloat HorizontalMargin = 15.0;
     next.enabled = (current.section+1 < self.parentTableView.numberOfSections ||
                     current.row+1 < [self.parentTableView numberOfRowsInSection: current.section]);
 
-    UIBarButtonItem *prev = self.toolbar.items[1];
+    UIBarButtonItem *prev = self.toolbar.items[0];
     prev.enabled = current.section > 0 || (current.section >= 0 && current.row > 0);
 
 }
@@ -679,7 +679,9 @@ static const CGFloat HorizontalMargin = 15.0;
 
 #pragma mark - ORKFormItemTextFieldCell
 
-@implementation ORKFormItemTextFieldCell
+@implementation ORKFormItemTextFieldCell {
+    UIBarButtonItem *_showSecureField;
+}
 
 - (void)cellInit {
     [super cellInit];
@@ -747,6 +749,56 @@ static const CGFloat HorizontalMargin = 15.0;
     [super inputValueDidChange];
     
     return YES;
+}
+
+#pragma mark Secure Text Field
+
+- (UIToolbar *)makeToolbar {
+    UIToolbar *toolbar = [super makeToolbar];
+    ORKTextAnswerFormat *answerFormat = (ORKTextAnswerFormat *)[self.formItem impliedAnswerFormat];
+
+    if (!answerFormat.isSecureTextEntry) {
+        return toolbar;
+    }
+
+    NSMutableArray *items = [toolbar.items mutableCopy];
+    // TODO: Localize "Show"
+    _showSecureField = [[UIBarButtonItem alloc] initWithTitle:@"Show"
+                                                        style:UIBarButtonItemStylePlain
+                                                       target:self
+                                                       action:@selector(showResponder:)];
+    _showSecureField.width = 32;
+
+    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                                                           target:nil
+                                                                           action:nil];
+    fixed.width = 8;
+
+    NSUInteger secondToLast = items.count - 1;
+    [items insertObject:fixed atIndex:secondToLast];
+    [items insertObject:_showSecureField atIndex:secondToLast];
+
+    toolbar.items = items;
+
+    return toolbar;
+}
+
+- (IBAction)showResponder: (UIBarButtonItem *)sender {
+    BOOL newSecure = !self.textFieldView.textField.isSecureTextEntry;
+    [self setShowSecurity:newSecure];
+}
+
+- (void) setShowSecurity: (BOOL)showSecurity {
+    // TODO: Localize "Show" / "Hide"
+    [self.textFieldView.textField setSecureTextEntry: showSecurity];
+    [_showSecureField setTitle: showSecurity ? @"Show" : @"Hide"];
+}
+
+- (void) textFieldDidEndEditing:(UITextField *)textField {
+    ORKTextAnswerFormat *answerFormat = (ORKTextAnswerFormat *)[self.formItem impliedAnswerFormat];
+    if (answerFormat.isSecureTextEntry) {
+        [self setShowSecurity:YES];
+    }
 }
 
 @end
