@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2015, Shazino SAS. All rights reserved.
+ Copyright (c) 2015, Apple Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -29,21 +29,14 @@
  */
 
 
-@import Foundation;
-#import <ResearchKit/ORKDefines.h>
-#import <ResearchKit/ORKActiveStep.h>
+#import "ORKRegistrationStep.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-ORK_CLASS_AVAILABLE
-@interface ORKHolePegTestPlaceStep : ORKActiveStep
+@interface ORKRegistrationStep ()
 
-@property (nonatomic, assign) ORKBodySagittal movingDirection;
-@property (nonatomic, assign, getter = isDominantHandTested) BOOL dominantHandTested;
-@property (nonatomic, assign) NSInteger numberOfPegs;
-@property (nonatomic, assign) double threshold;
-@property (nonatomic, assign, getter = isRotated) BOOL rotated;
+- (ORKTextAnswerFormat *)passwordAnswerFormat;
 
 @end
 

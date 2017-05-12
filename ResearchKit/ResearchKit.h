@@ -102,3 +102,4 @@
 #import <ResearchKit/ORKDataCollectionManager.h>
 #import <ResearchKit/ORKCollector.h>
 
+#import <ResearchKit/ORKDeprecated.h>
