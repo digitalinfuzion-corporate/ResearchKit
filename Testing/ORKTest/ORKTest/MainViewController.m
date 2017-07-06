@@ -80,6 +80,7 @@ DefineStringKey(HolePegTestTaskIdentifier);
 DefineStringKey(MemoryTaskIdentifier);
 DefineStringKey(PSATTaskIdentifier);
 DefineStringKey(ReactionTimeTaskIdentifier);
+DefineStringKey(StroopTaskIdentifier);
 DefineStringKey(TrailMakingTaskIdentifier);
 DefineStringKey(TwoFingerTapTaskIdentifier);
 DefineStringKey(TimedWalkTaskIdentifier);
@@ -371,6 +372,7 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
                            @"Memory Game Task",
                            @"PSAT Task",
                            @"Reaction Time Task",
+                           @"Stroop Task",
                            @"Trail Making Task",
                            @"Timed Walk Task",
                            @"Tone Audiometry Task",
@@ -579,6 +581,11 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
                                                  timeoutSound:0
                                                  failureSound:0
                                                       options:0];
+    } else if ([identifier isEqualToString:StroopTaskIdentifier]) {
+        return [ORKOrderedTask stroopTaskWithIdentifier:StroopTaskIdentifier
+                                 intendedUseDescription:nil
+                                       numberOfAttempts:15
+                                                options:0];
     } else if ([identifier isEqualToString:TowerOfHanoiTaskIdentifier]) {
         return [ORKOrderedTask towerOfHanoiTaskWithIdentifier:TowerOfHanoiTaskIdentifier
                                        intendedUseDescription:nil
@@ -1845,7 +1852,12 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
         }
         
         {
-            ORKTextAnswerFormat *format = [ORKAnswerFormat textAnswerFormatWithValidationRegex:@"^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$" invalidMessage:@"Invalid URL: %@"];
+            NSRegularExpression *validationRegularExpression =
+            [NSRegularExpression regularExpressionWithPattern:@"^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$"
+                                                      options:(NSRegularExpressionOptions)0
+                                                        error:nil];
+            ORKTextAnswerFormat *format = [ORKAnswerFormat textAnswerFormatWithValidationRegularExpression:validationRegularExpression
+                                                                                            invalidMessage:@"Invalid URL: %@"];
             format.multipleLines = NO;
             format.keyboardType = UIKeyboardTypeURL;
             format.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -2790,6 +2802,10 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
 
 - (void)reactionTimeTaskButtonTapped:(id)sender {
     [self beginTaskWithIdentifier:ReactionTimeTaskIdentifier];
+}
+
+- (void)stroopTaskButtonTapped:(id)sender {
+    [self beginTaskWithIdentifier:StroopTaskIdentifier];
 }
 
 - (void)towerOfHanoiTaskButtonTapped:(id)sender {
