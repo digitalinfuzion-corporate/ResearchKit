@@ -225,6 +225,7 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (void)prepareForReuse {
     self.hasChangedAnswer = NO;
+    [super prepareForReuse];
 }
 
 // Inform delegate of the change
