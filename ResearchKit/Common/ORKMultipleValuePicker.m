@@ -242,13 +242,34 @@
     }
 }
 
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    NSUInteger idx = [self convertFromPickerViewComponent:component];
-    if (idx == NSNotFound) {
-        return _separator;
+/**
+ @discussion replaced the method which returns a string with a method that returns a UILabel, sized to fit correctly
+ */
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+
+    // Re-Use View
+    UILabel *label;
+    if (view && [view isKindOfClass:[UILabel class]]) {
+        label = (UILabel *)view;
     } else {
-        return [[self.helpers[idx] textChoiceAtIndex:row] text] ?: @"";
+        label = [UILabel new];
     }
+
+    // Get Same Text as previous method
+    NSUInteger idx = [self convertFromPickerViewComponent:component];
+    NSString *text;
+    if (idx == NSNotFound) {
+        text = _separator;
+    } else {
+        text = [[self.helpers[idx] textChoiceAtIndex:row] text] ?: @"";
+    }
+
+    // Get the label to size itself correctly
+    label.text = text;
+    [label sizeToFit];
+
+    return label;
+
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
