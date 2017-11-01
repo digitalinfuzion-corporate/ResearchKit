@@ -4807,6 +4807,29 @@ stepViewControllerWillAppear:(ORKStepViewController *)stepViewController {
     return [[ORKOrderedTask alloc] initWithIdentifier:SignatureStepTaskIdentifier steps:steps];
 }
 
+#pragma mark - File Upload Task
+
+- (IBAction)fileImportStepButtonTapped:(id)sender {
+    [self beginTaskWithIdentifier:FileImportStepTaskIdentifier];
+}
+
+- (ORKOrderedTask *)makeFileImportStepTask {
+    NSMutableArray *steps = [[NSMutableArray alloc] init];
+
+    ORKInstructionStep *firstStep = [[ORKInstructionStep alloc] initWithIdentifier:@"firstStep"];
+    firstStep.text = @"Example of a file upload";
+    [steps addObject:firstStep];
+
+    ORKFileImportStep *fileImportStep = [ORKFileImportStep makePDFImportStepWithIdentifier:@"FileImportStep"];
+    fileImportStep.optional = YES;
+    [steps addObject:fileImportStep];
+
+    ORKCompletionStep *lastStep = [[ORKCompletionStep alloc] initWithIdentifier:@"lastStep"];
+    lastStep.title = @"Task Complete";
+    [steps addObject:lastStep];
+
+    return [[ORKOrderedTask alloc] initWithIdentifier:SignatureStepTaskIdentifier steps:steps];
+}
 
 #pragma mark - Footnote
 
@@ -4852,6 +4875,5 @@ stepViewControllerWillAppear:(ORKStepViewController *)stepViewController {
 
     return [[ORKOrderedTask alloc] initWithIdentifier:FootnoteTaskIdentifier steps:@[step1, step2, step3, step4, step5, lastStep]];
 }
-
 
 @end

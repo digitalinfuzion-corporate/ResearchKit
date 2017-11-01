@@ -2948,6 +2948,8 @@
 					};
 					B183A4731A8535D100C76870 = {
 						LastSwiftMigration = 0900;
+						DevelopmentTeam = 9QK6RBM7S7;
+						ProvisioningStyle = Automatic;
 					};
 					B18FF3A41A9FE25700C0C3B0 = {
 						CreatedOnToolsVersion = 7.0;
@@ -3469,6 +3471,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				TOOLCHAINS = default;
 			};
@@ -3508,6 +3511,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				TOOLCHAINS = default;
 				VALIDATE_PRODUCT = YES;

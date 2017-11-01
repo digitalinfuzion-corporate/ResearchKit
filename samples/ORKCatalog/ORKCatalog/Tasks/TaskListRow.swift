@@ -75,6 +75,7 @@ enum TaskListRow: Int, CustomStringConvertible {
     case timeIntervalQuestion
     case timeOfDayQuestion
     case valuePickerChoiceQuestion
+    case multipleValuePickerChoiceQuestion
     case validatedTextQuestion
     case imageCapture
     case videoCapture
@@ -139,6 +140,7 @@ enum TaskListRow: Int, CustomStringConvertible {
                     .timeIntervalQuestion,
                     .timeOfDayQuestion,
                     .valuePickerChoiceQuestion,
+                    .multipleValuePickerChoiceQuestion,
                     .validatedTextQuestion,
                     .imageCapture,
                     .videoCapture,
@@ -230,7 +232,10 @@ enum TaskListRow: Int, CustomStringConvertible {
             
         case .valuePickerChoiceQuestion:
             return NSLocalizedString("Value Picker Choice Question", comment: "")
-            
+
+        case .multipleValuePickerChoiceQuestion:
+            return NSLocalizedString("Multiple Value Picker Choice Question", comment: "")
+
         case .validatedTextQuestion:
             return NSLocalizedString("Validated Text Question", comment: "")
             
@@ -405,6 +410,10 @@ enum TaskListRow: Int, CustomStringConvertible {
         // Task with a value picker.
         case valuePickerChoiceQuestionTask
         case valuePickerChoiceQuestionStep
+
+        // Task with a multiple value picker.
+        case multipleValuePickerChoiceQuestionTask
+        case multipleValuePickerChoiceQuestionStep
         
         // Task with an example of validated text entry.
         case validatedTextQuestionTask
@@ -534,7 +543,10 @@ enum TaskListRow: Int, CustomStringConvertible {
         
         case .valuePickerChoiceQuestion:
                 return valuePickerChoiceQuestionTask
-            
+
+        case .multipleValuePickerChoiceQuestion:
+            return multipleValuePickerChoiceQuestionTask
+
         case .validatedTextQuestion:
             return validatedTextQuestionTask
             
@@ -991,6 +1003,36 @@ enum TaskListRow: Int, CustomStringConvertible {
         questionStep.text = exampleDetailText
         
         return ORKOrderedTask(identifier: String(describing:Identifier.valuePickerChoiceQuestionTask), steps: [questionStep])
+    }
+
+    /**
+     This task demonstrates a survey question using a value picker wheel.
+     Compare with the `textChoiceQuestionTask` and `imageChoiceQuestionTask`
+     which can serve a similar purpose.
+     */
+    private var multipleValuePickerChoiceQuestionTask: ORKTask {
+
+        let month = ["Unknown", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Sep", "Oct", "Nov", "Dec"]
+        let monthChoices = month.flatMap { ORKTextChoice(text: $0, value: $0 as NSString) }
+        let monthAnswer = ORKAnswerFormat.valuePickerAnswerFormat(with: monthChoices)
+
+        let days = ["Unknown"] + ((1...31).flatMap { String($0) })
+        let dayChoices = days.flatMap { ORKTextChoice(text: $0, value: $0 as NSString) }
+        let dayAnswer = ORKAnswerFormat.valuePickerAnswerFormat(with: dayChoices)
+
+        let years = 1900...2017
+        let yearChoices = years.flatMap { ORKTextChoice(text: String($0), value: $0 as NSNumber) }
+        let yearAnswer = ORKAnswerFormat.valuePickerAnswerFormat(with: yearChoices)
+
+
+        let answerFormat = ORKAnswerFormat.multipleValuePickerAnswerFormat(withValuePickers: [monthAnswer, dayAnswer, yearAnswer]);
+
+        let questionStep = ORKQuestionStep(identifier: String(describing:Identifier.multipleValuePickerChoiceQuestionStep), title: exampleQuestionText,
+                                           answer: answerFormat)
+
+        questionStep.text = exampleDetailText
+
+        return ORKOrderedTask(identifier: String(describing:Identifier.multipleValuePickerChoiceQuestionTask), steps: [questionStep])
     }
 
     /**
