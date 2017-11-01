@@ -131,17 +131,98 @@ static NSString *ORKNumericAnswerStyleToString(ORKNumericAnswerStyle style) {
 }
 
 static NSDictionary *dictionaryFromCircularRegion(CLCircularRegion *region) {
-    return @{
-             @"coordinate": dictionaryFromCoordinate(region.center),
-             @"radius": @(region.radius),
-             @"identifier": region.identifier
-             };
+    NSDictionary *dictionary = region ?
+    @{
+      @"coordinate": dictionaryFromCoordinate(region.center),
+      @"radius": @(region.radius),
+      @"identifier": region.identifier
+      } :
+    @{};
+    return dictionary;
 }
 
-static CLCircularRegion *CircularRegionFromDictionary(NSDictionary *dict) {
-    return [[CLCircularRegion alloc] initWithCenter:coordinateFromDictionary(dict[@"coordinate"])
-                                             radius:((NSNumber *)dict[@"radius"]).doubleValue
-                                         identifier:dict[@"identifier"]];
+static CLCircularRegion *circularRegionFromDictionary(NSDictionary *dict) {
+    CLCircularRegion *circularRegion;
+    if (dict.count == 3) {
+        circularRegion = [[CLCircularRegion alloc] initWithCenter:coordinateFromDictionary(dict[@"coordinate"])
+                                                           radius:((NSNumber *)dict[@"radius"]).doubleValue
+                                                       identifier:dict[@"identifier"]];
+    }
+    return circularRegion;
+}
+
+static NSArray *arrayFromRegularExpressionOptions(NSRegularExpressionOptions regularExpressionOptions) {
+    NSMutableArray *optionsArray = [NSMutableArray new];
+    if (regularExpressionOptions & NSRegularExpressionCaseInsensitive) {
+        [optionsArray addObject:@"NSRegularExpressionCaseInsensitive"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionAllowCommentsAndWhitespace) {
+        [optionsArray addObject:@"NSRegularExpressionAllowCommentsAndWhitespace"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionIgnoreMetacharacters) {
+        [optionsArray addObject:@"NSRegularExpressionIgnoreMetacharacters"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionDotMatchesLineSeparators) {
+        [optionsArray addObject:@"NSRegularExpressionDotMatchesLineSeparators"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionAnchorsMatchLines) {
+        [optionsArray addObject:@"NSRegularExpressionAnchorsMatchLines"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionUseUnixLineSeparators) {
+        [optionsArray addObject:@"NSRegularExpressionUseUnixLineSeparators"];
+    }
+    if (regularExpressionOptions & NSRegularExpressionUseUnicodeWordBoundaries) {
+        [optionsArray addObject:@"NSRegularExpressionUseUnicodeWordBoundaries"];
+    }
+    return [optionsArray copy];
+}
+
+static NSRegularExpressionOptions regularExpressionOptionsFromArray(NSArray *array) {
+    NSRegularExpressionOptions regularExpressionOptions = 0;
+    for (NSString *optionString in array) {
+        if ([optionString isEqualToString:@"NSRegularExpressionCaseInsensitive"]) {
+            regularExpressionOptions |= NSRegularExpressionCaseInsensitive;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionAllowCommentsAndWhitespace"]) {
+            regularExpressionOptions |= NSRegularExpressionAllowCommentsAndWhitespace;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionIgnoreMetacharacters"]) {
+            regularExpressionOptions |= NSRegularExpressionIgnoreMetacharacters;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionDotMatchesLineSeparators"]) {
+            regularExpressionOptions |= NSRegularExpressionDotMatchesLineSeparators;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionAnchorsMatchLines"]) {
+            regularExpressionOptions |= NSRegularExpressionAnchorsMatchLines;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionUseUnixLineSeparators"]) {
+            regularExpressionOptions |= NSRegularExpressionUseUnixLineSeparators;
+        }
+        else if ([optionString isEqualToString:@"NSRegularExpressionUseUnicodeWordBoundaries"]) {
+            regularExpressionOptions |= NSRegularExpressionUseUnicodeWordBoundaries;
+        }
+    }
+    return regularExpressionOptions;
+}
+
+static NSDictionary *dictionaryFromRegularExpression(NSRegularExpression *regularExpression) {
+    NSDictionary *dictionary = regularExpression ?
+    @{
+      @"pattern": regularExpression.pattern ?: @"",
+      @"options": arrayFromRegularExpressionOptions(regularExpression.options)
+      } :
+    @{};
+    return dictionary;
+}
+
+static NSRegularExpression *regularExpressionsFromDictionary(NSDictionary *dict) {
+    NSRegularExpression *regularExpression;
+    if (dict.count == 2) {
+        regularExpression = [NSRegularExpression regularExpressionWithPattern:dict[@"pattern"]
+                                                  options:regularExpressionOptionsFromArray(dict[@"options"])
+                                                    error:nil];
+    }
+    return regularExpression;
 }
 
 static NSMutableDictionary *ORKESerializationEncodingTable();
@@ -440,7 +521,8 @@ encondingTable =
              return [[ORKPasscodeStep alloc] initWithIdentifier:GETPROP(dict, identifier)];
          },
          (@{
-           PROPERTY(passcodeType, NSNumber, NSObject, YES, nil, nil)
+           PROPERTY(passcodeType, NSNumber, NSObject, YES, nil, nil),
+           PROPERTY(passcodeFlow, NSNumber, NSObject, YES, nil, nil)
            })),
    ENTRY(ORKWaitStep,
          ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -471,6 +553,7 @@ encondingTable =
          },
          (@{
             PROPERTY(detailText, NSString, NSObject, YES, nil, nil),
+            PROPERTY(footnote, NSString, NSObject, YES, nil, nil),
             })),
    ENTRY(ORKVideoInstructionStep,
          ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -676,11 +759,24 @@ encondingTable =
             PROPERTY(timeoutSound, NSNumber, NSObject, YES, nil, nil),
             PROPERTY(failureSound, NSNumber, NSObject, YES, nil, nil),
             })),
+   ENTRY(ORKStroopStep,
+         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
+             return [[ORKStroopStep alloc] initWithIdentifier:GETPROP(dict, identifier)];
+         },
+         (@{
+            PROPERTY(numberOfAttempts, NSNumber, NSObject, YES, nil, nil)})),
    ENTRY(ORKTappingIntervalStep,
          ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
              return [[ORKTappingIntervalStep alloc] initWithIdentifier:GETPROP(dict, identifier)];
          },
          (@{
+            })),
+   ENTRY(ORKTrailmakingStep,
+         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
+             return [[ORKTrailmakingStep alloc] initWithIdentifier:GETPROP(dict, identifier)];
+         },
+         (@{
+            PROPERTY(trailType, NSString, NSObject, YES, nil, nil),
             })),
    ENTRY(ORKTowerOfHanoiStep,
          ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -800,7 +896,8 @@ encondingTable =
             return [[ORKFormStep alloc] initWithIdentifier:GETPROP(dict, identifier)];
         },
         (@{
-          PROPERTY(formItems, ORKFormItem, NSArray, YES, nil, nil)
+          PROPERTY(formItems, ORKFormItem, NSArray, YES, nil, nil),
+          PROPERTY(footnote, NSString, NSObject, YES, nil, nil),
           })),
   ENTRY(ORKFormItem,
         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -849,6 +946,7 @@ encondingTable =
           PROPERTY(calendar, NSCalendar, NSObject, YES,
                    ^id(id calendar) { return [(NSCalendar *)calendar calendarIdentifier]; },
                    ^id(id string) { return [NSCalendar calendarWithIdentifier:string]; }),
+          PROPERTY(shouldRequestAuthorization, NSNumber, NSObject, YES, nil, nil),
           })),
   ENTRY(ORKHealthKitQuantityTypeAnswerFormat,
         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -864,6 +962,7 @@ encondingTable =
           PROPERTY(numericAnswerStyle, NSNumber, NSObject, NO,
                    ^id(id num) { return ORKNumericAnswerStyleToString(((NSNumber *)num).integerValue); },
                    ^id(id string) { return @(ORKNumericAnswerStyleFromString(string)); }),
+          PROPERTY(shouldRequestAuthorization, NSNumber, NSObject, YES, nil, nil),
           })),
   ENTRY(ORKAnswerFormat,
         nil,
@@ -875,8 +974,15 @@ encondingTable =
         },
         (@{
           PROPERTY(textChoices, ORKTextChoice, NSArray, NO, nil, nil),
-          
           })),
+   ENTRY(ORKMultipleValuePickerAnswerFormat,
+         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
+             return [[ORKMultipleValuePickerAnswerFormat alloc] initWithValuePickers:GETPROP(dict, valuePickers) separator:GETPROP(dict, separator)];
+         },
+         (@{
+            PROPERTY(valuePickers, ORKValuePickerAnswerFormat, NSArray, NO, nil, nil),
+            PROPERTY(separator, NSString, NSObject, NO, nil, nil),
+            })),
   ENTRY(ORKImageChoiceAnswerFormat,
         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
             return [[ORKImageChoiceAnswerFormat alloc] initWithImageChoices:GETPROP(dict, imageChoices)];
@@ -1002,7 +1108,9 @@ encondingTable =
         },
         (@{
           PROPERTY(maximumLength, NSNumber, NSObject, NO, nil, nil),
-          PROPERTY(validationRegex, NSString, NSObject, YES, nil, nil),
+          PROPERTY(validationRegularExpression, NSRegularExpression, NSObject, YES,
+                   ^id(id value) { return dictionaryFromRegularExpression((NSRegularExpression *)value); },
+                   ^id(id dict) { return regularExpressionsFromDictionary(dict); } ),
           PROPERTY(invalidMessage, NSString, NSObject, YES, nil, nil),
           PROPERTY(autocapitalizationType, NSNumber, NSObject, YES, nil, nil),
           PROPERTY(autocorrectionType, NSNumber, NSObject, YES, nil, nil),
@@ -1034,9 +1142,11 @@ encondingTable =
           })),
   ENTRY(ORKBooleanAnswerFormat,
         ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
-            return [[ORKBooleanAnswerFormat alloc] init];
+            return [[ORKBooleanAnswerFormat alloc] initWithYesString:((NSString *)GETPROP(dict, yes)) noString:((NSString *)GETPROP(dict, no))];
         },
         (@{
+           PROPERTY(yes, NSString, NSObject, NO, nil, nil),
+           PROPERTY(no, NSString, NSObject, NO, nil, nil)
           })),
    ENTRY(ORKHeightAnswerFormat,
          ^id(NSDictionary *dict, ORKESerializationPropertyGetter getter) {
@@ -1108,6 +1218,19 @@ encondingTable =
                     ^id(id value) { return value?dictionaryFromCGRect(((NSValue *)value).CGRectValue):nil; },
                     ^id(id dict) { return [NSValue valueWithCGRect:rectFromDictionary(dict)]; })
            })),
+   ENTRY(ORKTrailmakingTap,
+         nil,
+         (@{
+            PROPERTY(timestamp, NSNumber, NSObject, NO, nil, nil),
+            PROPERTY(index, NSNumber, NSObject, NO, nil, nil),
+            PROPERTY(incorrect, NSNumber, NSObject, NO, nil, nil),
+            })),
+   ENTRY(ORKTrailmakingResult,
+         nil,
+         (@{
+            PROPERTY(taps, ORKTrailmakingTap, NSArray, NO, nil, nil),
+            PROPERTY(numberOfErrors, NSNumber, NSObject, NO, nil, nil)
+            })),
   ENTRY(ORKSpatialSpanMemoryGameTouchSample,
         nil,
         (@{
@@ -1154,7 +1277,8 @@ encondingTable =
         (@{
            PROPERTY(frequency, NSNumber, NSObject, NO, nil, nil),
            PROPERTY(channel, NSNumber, NSObject, NO, nil, nil),
-           PROPERTY(amplitude, NSNumber, NSObject, NO, nil, nil)
+           PROPERTY(amplitude, NSNumber, NSObject, NO, nil, nil),
+           PROPERTY(channelSelected, NSNumber, NSObject, NO, nil, nil)
            })),
   ENTRY(ORKToneAudiometryResult,
         nil,
@@ -1167,6 +1291,15 @@ encondingTable =
          (@{
             PROPERTY(timestamp, NSNumber, NSObject, NO, nil, nil),
             PROPERTY(fileResult, ORKResult, NSObject, NO, nil, nil)
+            })),
+   ENTRY(ORKStroopResult,
+         nil,
+         (@{
+            PROPERTY(startTime, NSNumber, NSObject, NO, nil, nil),
+            PROPERTY(endTime, NSNumber, NSObject, NO, nil, nil),
+            PROPERTY(color, NSString, NSObject, NO, nil, nil),
+            PROPERTY(text, NSString, NSObject, NO, nil, nil),
+            PROPERTY(colorSelected, NSString, NSObject, NO, nil, nil)
             })),
    ENTRY(ORKTimedWalkResult,
          nil,
@@ -1262,6 +1395,12 @@ encondingTable =
          (@{
             PROPERTY(choiceAnswers, NSObject, NSObject, NO, nil, nil)
             })),
+   ENTRY(ORKMultipleComponentQuestionResult,
+         nil,
+         (@{
+            PROPERTY(componentsAnswer, NSObject, NSObject, NO, nil, nil),
+            PROPERTY(separator, NSString, NSObject, NO, nil, nil)
+            })),
    ENTRY(ORKBooleanQuestionResult,
          nil,
          (@{
@@ -1318,14 +1457,8 @@ encondingTable =
                      ^id(id value) { return value ? dictionaryFromCoordinate(((NSValue *)value).MKCoordinateValue) : nil; },
                      ^id(id dict) { return [NSValue valueWithMKCoordinate:coordinateFromDictionary(dict)]; }),
             PROPERTY(region, CLCircularRegion, NSObject, NO,
-                     ^id(id value) {
-                         return value ?
-                         dictionaryFromCircularRegion((CLCircularRegion *)value)
-                         : nil;
-                     },
-                     ^id(id dict) {
-                         return dict ? CircularRegionFromDictionary(dict) : nil;
-                     }),
+                     ^id(id value) { return dictionaryFromCircularRegion((CLCircularRegion *)value); },
+                     ^id(id dict) { return circularRegionFromDictionary(dict); }),
             })),
    ENTRY(ORKLocationQuestionResult,
          nil,
