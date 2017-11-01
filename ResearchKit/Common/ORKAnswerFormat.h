@@ -125,6 +125,9 @@ ORK_CLASS_AVAILABLE
 + (ORKMultipleValuePickerAnswerFormat *)multipleValuePickerAnswerFormatWithValuePickers:(NSArray<ORKValuePickerAnswerFormat *> *)valuePickers;
 
 + (ORKImageChoiceAnswerFormat *)choiceAnswerFormatWithImageChoices:(NSArray<ORKImageChoice *> *)imageChoices;
++ (ORKImageChoiceAnswerFormat *)choiceAnswerFormatWithImageChoices:(NSArray<ORKImageChoice *> *)imageChoices
+                                                             style:(ORKChoiceAnswerStyle)style
+                                                          vertical:(BOOL)vertical;
 
 + (ORKTextChoiceAnswerFormat *)choiceAnswerFormatWithStyle:(ORKChoiceAnswerStyle)style
                                                textChoices:(NSArray<ORKTextChoice *> *)textChoices;
@@ -729,12 +732,36 @@ ORK_CLASS_AVAILABLE
 - (instancetype)initWithImageChoices:(NSArray<ORKImageChoice *> *)imageChoices NS_DESIGNATED_INITIALIZER;
 
 /**
+ Returns an initialized image choice answer format using the specified array of images.
+ 
+ @param imageChoices    Array of `ORKImageChoice` objects.
+ @param style           The style of question, such as single or multiple choice.
+ @param vertical        Pass `YES` to stack images vertically; for the default horizontal
+ layout, pass `NO`.
+ 
+ @return An initialized image choice answer format.
+ */
+- (instancetype)initWithImageChoices:(NSArray<ORKImageChoice *> *)imageChoices
+                               style:(ORKChoiceAnswerStyle)style
+                            vertical:(BOOL)vertical NS_DESIGNATED_INITIALIZER;
+
+/**
  An array of `ORKImageChoice` objects that represent the available choices. (read-only)
  
  The text of the currently selected choice is displayed on screen. The text for
  each choice is spoken by VoiceOver when an image is highlighted.
  */
 @property (copy, readonly) NSArray<ORKImageChoice *> *imageChoices;
+
+/**
+ The style of the question (that is, single or multiple choice).
+ */
+@property (readonly) ORKChoiceAnswerStyle style;
+
+/**
+ A Boolean value indicating whether the choices are stacked vertically. (read-only)
+ */
+@property (readonly, getter=isVertical) BOOL vertical;
 
 @end
 
@@ -1092,6 +1119,14 @@ Returns an initialized numeric answer format using the specified style, unit des
  The default value of this property is `nil`, which means that no maximum value is displayed.
  */
 @property (copy, nullable) NSNumber *maximum;
+
+/**
+ The decimal scale (number of digits to the right of the decimal point) allowed value for the
+ numeric answer.
+ 
+ The default value of this property is `nil`, which means that no limit scale value is used.
+ */
+@property (copy, nullable) NSNumber *scale;
 
 @end
 
