@@ -39,19 +39,7 @@
 #import "ORKHelpers_Internal.h"
 #import "ORKSkin.h"
 
-
-// Adding `const` fucking breaks the app why now??>?
-NSString *scrollViewKeypath = @"webView.scollView.contentOffset";
-
-/// KVO guide here
-/// http://nshipster.com/key-value-observing/
-static void * reviewKVOContext = &reviewKVOContext;
-
-@interface ORKConsentReviewController () <UIWebViewDelegate>
-
-@end
-
-@interface ORKConsentReviewController (ScrollViewDelegate) <UIScrollViewDelegate>
+@interface ORKConsentReviewController () <UIWebViewDelegate, UIScrollViewDelegate>
 
 @end
 
@@ -199,10 +187,6 @@ static void * reviewKVOContext = &reviewKVOContext;
     }
     return YES;
 }
-
-@end
-
-@implementation ORKConsentReviewController (ScrollViewDelegate)
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
