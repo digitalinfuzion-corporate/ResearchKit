@@ -39,16 +39,16 @@
 #import "ORKHelpers_Internal.h"
 #import "ORKSkin.h"
 
-
-@interface ORKConsentReviewController () <UIWebViewDelegate>
+@interface ORKConsentReviewController () <UIWebViewDelegate, UIScrollViewDelegate>
 
 @end
-
 
 @implementation ORKConsentReviewController {
     UIToolbar *_toolbar;
     NSString *_htmlString;
     NSMutableArray *_variableConstraints;
+    UIBarButtonItem *_disagree;
+    UIBarButtonItem *_agree;
 }
 
 - (instancetype)initWithHTML:(NSString *)html delegate:(id<ORKConsentReviewControllerDelegate>)delegate {
@@ -56,11 +56,12 @@
     if (self) {
         _htmlString = html;
         _delegate = delegate;
-        
-        self.toolbarItems = @[
-                             [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_DISAGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancel)],
+
+        _disagree = [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_DISAGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
+        _agree = [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_AGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(ack)];
+        self.toolbarItems = @[_disagree,
                              [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-                             [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_AGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(ack)]];
+                             _agree];
     }
     return self;
 }
@@ -91,6 +92,14 @@
     [self.view addSubview:_toolbar];
     
     [self setUpStaticConstraints];
+
+    // Only enable "Agree" after scrolling to bottom
+    _webView.scrollView.delegate = self;
+    _agree.enabled = false;
+}
+
+- (void)enableToolbar {
+    _agree.enabled = true;
 }
 
 - (void)updateLayoutMargins {
@@ -137,9 +146,9 @@
     NSDictionary *views = NSDictionaryOfVariableBindings(_webView, _toolbar);
     const CGFloat horizontalMargin = ORKStandardHorizontalMarginForView(self.view);
     [_variableConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-horizMargin-[_webView]-horizMargin-|"
-                                                                      options:(NSLayoutFormatOptions)0
+                                                                                      options:(NSLayoutFormatOptions)0
                                                                                       metrics:@{ @"horizMargin": @(horizontalMargin) }
-                                                                        views:views]];
+                                                                                        views:views]];
     [NSLayoutConstraint activateConstraints:_variableConstraints];
 }
 
@@ -160,7 +169,7 @@
                                                                    message:self.localizedReasonForConsent
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
-    [alert addAction:[UIAlertAction actionWithTitle:ORKLocalizedString(@"BUTTON_CANCEL", nil) style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:ORKLocalizedString(@"BUTTON_CANCEL", nil) style:UIAlertActionStyleCancel handler:nil]];
     [alert addAction:[UIAlertAction actionWithTitle:ORKLocalizedString(@"BUTTON_AGREE", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         // Have to dispatch, so following transition animation works
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -177,6 +186,14 @@
         return NO;
     }
     return YES;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+        [self enableToolbar];
+    } else if (scrollView.contentOffset.y <= 0) {
+        // do nothing?
+    }
 }
 
 @end

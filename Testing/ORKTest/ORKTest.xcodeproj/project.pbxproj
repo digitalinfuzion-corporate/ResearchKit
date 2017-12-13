@@ -334,13 +334,10 @@
 				TargetAttributes = {
 					86717A891AC0C0FE00AC2A23 = {
 						CreatedOnToolsVersion = 6.2;
-<<<<<<< HEAD
 						DevelopmentTeam = 9QK6RBM7S7;
-=======
->>>>>>> upstream/master
 						DevelopmentTeamName = "Apple Inc. - SPG-NGS";
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -638,12 +635,8 @@
 				CODE_SIGN_ENTITLEMENTS = "ORKTest/Supporting Files/ORKTest.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-<<<<<<< HEAD
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9QK6RBM7S7;
-=======
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
->>>>>>> upstream/master
 				INFOPLIST_FILE = "$(SRCROOT)/ORKTest/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -667,12 +660,8 @@
 				CODE_SIGN_ENTITLEMENTS = "ORKTest/Supporting Files/ORKTest.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-<<<<<<< HEAD
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9QK6RBM7S7;
-=======
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
->>>>>>> upstream/master
 				INFOPLIST_FILE = "$(SRCROOT)/ORKTest/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

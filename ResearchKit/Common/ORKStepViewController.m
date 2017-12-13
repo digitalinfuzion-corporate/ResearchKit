@@ -400,7 +400,7 @@
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     [alert addAction:[UIAlertAction actionWithTitle:ORKLocalizedString(@"BUTTON_CANCEL", nil)
-                                              style:UIAlertActionStyleDefault
+                                              style:UIAlertActionStyleCancel
                                             handler:nil]];
     
     _presentingAlert = YES;
