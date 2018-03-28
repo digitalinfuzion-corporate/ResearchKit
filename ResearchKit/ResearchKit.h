@@ -53,11 +53,8 @@
 #import <ResearchKit/ORKVisualConsentStep.h>
 #import <ResearchKit/ORKWaitStep.h>
 #import <ResearchKit/ORKVideoInstructionStep.h>
-<<<<<<< HEAD
 #import <ResearchKit/ORKFileImportStep.h>
-=======
 #import <ResearchKit/ORKWebViewStep.h>
->>>>>>> 4019c380ebca6ca5faf304009d2bf90a476a4bcd
 
 #import <ResearchKit/ORKTask.h>
 #import <ResearchKit/ORKOrderedTask.h>
@@ -97,11 +94,8 @@
 #import <ResearchKit/ORKTouchAnywhereStepViewController.h>
 #import <ResearchKit/ORKVerificationStepViewController.h>
 #import <ResearchKit/ORKWaitStepViewController.h>
-<<<<<<< HEAD
 #import <ResearchKit/ORKFileImportStepViewController.h>
-=======
 #import <ResearchKit/ORKWebViewStepViewController.h>
->>>>>>> 4019c380ebca6ca5faf304009d2bf90a476a4bcd
 
 #import <ResearchKit/ORKRecorder.h>
 

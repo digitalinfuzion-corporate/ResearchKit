@@ -681,6 +681,7 @@ static const CGFloat HorizontalMargin = 15.0;
 #pragma mark - ORKFormItemTextFieldCell
 
 @implementation ORKFormItemTextFieldCell {
+    UIBarButtonItem *_showSecureField;
     NSString *_defaultTextAnswer;
 }
 

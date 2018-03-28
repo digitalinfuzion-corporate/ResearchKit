@@ -130,7 +130,8 @@ NSArray<NSDictionary<NSString *, NSArray<NSString *> *> *> *TestButtonTable()
                         @"Table Step",
                         @"Video Instruction Step",
                         @"Wait Step",
-                        @"Web View Step"
+                        @"Web View Step",
+                        @"File Import Step",
                         ]},
              @{ @"Miscellaneous":
                     @[
@@ -141,9 +142,6 @@ NSArray<NSDictionary<NSString *, NSArray<NSString *> *> *> *TestButtonTable()
                         ]},
              ];
 }
-
-
-DefineStringKey(FileImportStepTaskIdentifier);
 
 @interface SectionHeader: UICollectionReusableView
 
@@ -238,37 +236,6 @@ static const CGFloat HeaderSideLayoutMargin = 16.0;
     [_button setTitle:title forState:UIControlStateNormal];
     [_button addTarget:target action:selector forControlEvents:UIControlEventTouchUpInside];
 }
-
-@end
-
-/**
- A subclass is required for the login step.
-
- The implementation below demonstrates how to subclass and override button actions.
- */
-@interface LoginViewController : ORKLoginStepViewController
-
-@end
-
-@implementation LoginViewController
-
-- (void)forgotPasswordButtonTapped {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Forgot password?"
-                                                                   message:@"Button tapped"
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-@end
-
-
-/**
- A subclass is required for the verification step.
-
- The implementation below demonstrates how to subclass and override button actions.
- */
-@interface VerificationViewController : ORKVerificationStepViewController
 
 @end
 
@@ -612,6 +579,7 @@ NSString *RemoveParenthesisAndCapitalizeString(NSString *string) {
     UIViewController *chartListViewController = [chartStoryboard instantiateViewControllerWithIdentifier:@"ChartPerformanceListViewController"];
     [self presentViewController:chartListViewController animated:YES completion:nil];
 }
+
 
 #pragma mark - Helpers
 

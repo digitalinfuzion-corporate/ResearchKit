@@ -673,4 +673,23 @@
     }
 }
 
+- (ORKOrderedTask *)makeFileImportStepTaskWithIdentifier:(NSString *)identifier {
+    NSMutableArray *steps = [[NSMutableArray alloc] init];
+    
+    ORKInstructionStep *firstStep = [[ORKInstructionStep alloc] initWithIdentifier:@"firstStep"];
+    firstStep.text = @"Example of a file upload";
+    [steps addObject:firstStep];
+    
+    ORKFileImportStep *fileImportStep = [ORKFileImportStep makePDFImportStepWithIdentifier:@"FileImportStep"];
+    fileImportStep.optional = YES;
+    [steps addObject:fileImportStep];
+    
+    ORKCompletionStep *lastStep = [[ORKCompletionStep alloc] initWithIdentifier:@"lastStep"];
+    lastStep.title = @"Task Complete";
+    [steps addObject:lastStep];
+    
+    ORKOrderedTask *fileImportTask = [[ORKOrderedTask alloc] initWithIdentifier:identifier steps:steps];
+    return fileImportTask;
+}
+
 @end
