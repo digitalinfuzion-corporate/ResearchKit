@@ -681,13 +681,14 @@ static const CGFloat HorizontalMargin = 15.0;
 #pragma mark - ORKFormItemTextFieldCell
 
 @implementation ORKFormItemTextFieldCell {
-    UIBarButtonItem *_showSecureField;
+    NSString *_defaultTextAnswer;
 }
 
 - (void)cellInit {
     [super cellInit];
     self.textField.allowsSelection = YES;
     ORKTextAnswerFormat *answerFormat = (ORKTextAnswerFormat *)[self.formItem impliedAnswerFormat];
+    _defaultTextAnswer = answerFormat.defaultTextAnswer;
     self.textField.autocorrectionType = answerFormat.autocorrectionType;
     self.textField.autocapitalizationType = answerFormat.autocapitalizationType;
     self.textField.spellCheckingType = answerFormat.spellCheckingType;
@@ -704,11 +705,23 @@ static const CGFloat HorizontalMargin = 15.0;
     [super inputValueDidChange];
 }
 
+- (void)assignDefaultAnswer {
+    if (_defaultTextAnswer) {
+        [self ork_setAnswer:_defaultTextAnswer];
+        if (self.textField) {
+            self.textField.text = _defaultTextAnswer;
+        }
+    }
+}
+
 - (void)answerDidChange {
     id answer = self.answer;
     
     ORKTextAnswerFormat *answerFormat = (ORKTextAnswerFormat *)[self.formItem impliedAnswerFormat];
     if (answer != ORKNullAnswerValue()) {
+        if (!answer) {
+            [self assignDefaultAnswer];
+        }
         NSString *text = (NSString *)answer;
         NSInteger maxLength = answerFormat.maximumLength;
         BOOL changedValue = NO;
@@ -809,6 +822,7 @@ static const CGFloat HorizontalMargin = 15.0;
 
 @implementation ORKFormItemNumericCell {
     NSNumberFormatter *_numberFormatter;
+    NSNumber *_defaultNumericAnswer;
 }
 
 - (void)cellInit {
@@ -819,6 +833,7 @@ static const CGFloat HorizontalMargin = 15.0;
     self.textField.allowsSelection = YES;
     
     ORKNumericAnswerFormat *answerFormat = (ORKNumericAnswerFormat *)[self.formItem impliedAnswerFormat];
+    _defaultNumericAnswer = answerFormat.defaultNumericAnswer;
     
     self.textField.manageUnitAndPlaceholder = YES;
     self.textField.unit = answerFormat.unit;
@@ -829,6 +844,15 @@ static const CGFloat HorizontalMargin = 15.0;
     
     [self answerDidChange];
     
+}
+
+- (void) assignDefaultAnswer {
+    if (_defaultNumericAnswer) {
+        [self ork_setAnswer:_defaultNumericAnswer];
+        if (self.textField) {
+            self.textField.text = [_numberFormatter stringFromNumber:_defaultNumericAnswer];
+        }
+    }
 }
 
 - (void)dealloc {
@@ -851,12 +875,17 @@ static const CGFloat HorizontalMargin = 15.0;
 
 - (void)answerDidChange {
     id answer = self.answer;
-    if (answer && answer != ORKNullAnswerValue()) {
-        NSString *displayValue = answer;
-        if ([answer isKindOfClass:[NSNumber class]]) {
-            displayValue = [_numberFormatter stringFromNumber:answer];
+    if (answer != ORKNullAnswerValue()) {
+        if (!answer) {
+            [self assignDefaultAnswer];
         }
-        self.textField.text = displayValue;
+        else {
+            NSString *displayValue = answer;
+            if ([answer isKindOfClass:[NSNumber class]]) {
+                displayValue = [_numberFormatter stringFromNumber:answer];
+            }
+            self.textField.text = displayValue;
+        }
     } else {
         self.textField.text = nil;
     }
@@ -898,6 +927,7 @@ static const CGFloat HorizontalMargin = 15.0;
     ORKFormTextView *_textView;
     CGFloat _lastSeenLineCount;
     NSInteger _maxLength;
+    NSString *_defaultTextAnswer;
 }
 
 - (void)cellInit {
@@ -965,6 +995,7 @@ static const CGFloat HorizontalMargin = 15.0;
     ORKAnswerFormat *answerFormat = [self.formItem impliedAnswerFormat];
     if ([answerFormat isKindOfClass:[ORKTextAnswerFormat class]]) {
         ORKTextAnswerFormat *textAnswerFormat = (ORKTextAnswerFormat *)answerFormat;
+        _defaultTextAnswer = textAnswerFormat.defaultTextAnswer;
         _maxLength = [textAnswerFormat maximumLength];
         _textView.autocorrectionType = textAnswerFormat.autocorrectionType;
         _textView.autocapitalizationType = textAnswerFormat.autocapitalizationType;
@@ -981,12 +1012,22 @@ static const CGFloat HorizontalMargin = 15.0;
     [self applyAnswerFormat];
 }
 
+- (void)assignDefaultAnswer {
+    if (_defaultTextAnswer) {
+        [self ork_setAnswer:_defaultTextAnswer];
+        if (_textView) {
+            _textView.text = _defaultTextAnswer;
+        }
+    }
+}
+
 - (void)answerDidChange {
     id answer = self.answer;
     if (answer == ORKNullAnswerValue()) {
         answer = nil;
     }
     _textView.text = (NSString *)answer;
+    [self assignDefaultAnswer];
 }
 
 - (BOOL)becomeFirstResponder {
@@ -1233,8 +1274,9 @@ static const CGFloat HorizontalMargin = 15.0;
           [answerFormat isKindOfClass:[ORKTimeIntervalAnswerFormat class]] ||
           [answerFormat isKindOfClass:[ORKValuePickerAnswerFormat class]] ||
           [answerFormat isKindOfClass:[ORKMultipleValuePickerAnswerFormat class]] ||
-          [answerFormat isKindOfClass:[ORKHeightAnswerFormat class]])) {
-        @throw [NSException exceptionWithName:NSGenericException reason:@"formItem.answerFormat should be an ORKDateAnswerFormat, ORKTimeOfDayAnswerFormat, ORKTimeIntervalAnswerFormat, ORKValuePicker, ORKMultipleValuePickerAnswerFormat, or ORKHeightAnswerFormat instance" userInfo:nil];
+          [answerFormat isKindOfClass:[ORKHeightAnswerFormat class]] ||
+          [answerFormat isKindOfClass:[ORKWeightAnswerFormat class]])) {
+        @throw [NSException exceptionWithName:NSGenericException reason:@"formItem.answerFormat should be an ORKDateAnswerFormat, ORKTimeOfDayAnswerFormat, ORKTimeIntervalAnswerFormat, ORKValuePicker, ORKMultipleValuePickerAnswerFormat, ORKHeightAnswerFormat, or ORKWeightAnswerFormat instance" userInfo:nil];
     }
     [super setFormItem:formItem];
 }
