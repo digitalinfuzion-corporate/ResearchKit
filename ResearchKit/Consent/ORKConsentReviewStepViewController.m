@@ -227,12 +227,18 @@ static NSString *const _FamilyNameIdentifier = @"family";
             signature.familyName = _signatureLast;
         }
     }
+
+    NSString *detail = [[self consentReviewStep] instructions];
+    if (detail == nil) {
+        detail = ORKLocalizedString(@"CONSENT_REVIEW_INSTRUCTION", nil);
+    }
     
     NSString *html = [document mobileHTMLWithTitle:ORKLocalizedString(@"CONSENT_REVIEW_TITLE", nil)
-                                             detail:ORKLocalizedString(@"CONSENT_REVIEW_INSTRUCTION", nil)];
+                                             detail:detail];
 
-    ORKConsentReviewController *reviewViewController = [[ORKConsentReviewController alloc] initWithHTML:html delegate:self];
+    ORKConsentReviewController *reviewViewController = [[ORKConsentReviewController alloc] initWithHTML:html delegate:self requiresScrollToBottom: [[self consentReviewStep] requiresScrollToBottom]];
     reviewViewController.localizedReasonForConsent = [[self consentReviewStep] reasonForConsent];
+    reviewViewController.requiresAgreement = [[self consentReviewStep] requiresAgreement];
     return reviewViewController;
 }
 
@@ -456,6 +462,16 @@ static NSString *const _SignatureStepIdentifier = @"signatureStep";
     _documentReviewed = NO;
     [self notifyDelegateOnResultChange];
     
+    [self goForward];
+}
+
+- (void)consentReviewControllerDidContinue:(ORKConsentReviewController *)consentReviewController {
+    _documentReviewed = YES;
+    _signatureFirst = nil;
+    _signatureLast = nil;
+    _signatureImage = nil;
+    [self notifyDelegateOnResultChange];
+
     [self goForward];
 }
 

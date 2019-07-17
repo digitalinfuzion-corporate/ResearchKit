@@ -97,11 +97,30 @@ ORK_CLASS_AVAILABLE
 @property (nonatomic, strong, readonly, nullable) ORKConsentSignature *signature;
 
 /**
+ When set to YES, the consent document must be scrolled to the bottom to enable the `Agree` button.
+ */
+@property (nonatomic) BOOL requiresScrollToBottom;
+
+/**
  A user-visible description of the reason for agreeing to consent in a localized string.
  
  The reason for consent is presented in the confirmation dialog that users see when giving their consent.
   */
 @property (nonatomic, copy, nullable) NSString *reasonForConsent;
+
+
+/**
+ a value indicating whether or not this requires agreement, since this step doesn't store an ORKResult it must be asked
+ in a subsequent question in order to get and store the value for ODM
+ */
+@property (nonatomic) BOOL requiresAgreement;
+
+
+/**
+ A user-visible description of the instructions. Should say tap 'next' or 'agree' depending on how you've configured `requiresAgreement`.
+
+ */
+@property (nonatomic, copy, nullable) NSString *instructions;
 
 @end
 

@@ -49,9 +49,11 @@
     NSMutableArray *_variableConstraints;
     UIBarButtonItem *_disagree;
     UIBarButtonItem *_agree;
+    UIBarButtonItem *_next;
+    BOOL _requiresScrollToBottom;
 }
 
-- (instancetype)initWithHTML:(NSString *)html delegate:(id<ORKConsentReviewControllerDelegate>)delegate {
+- (instancetype)initWithHTML:(NSString *)html delegate:(id<ORKConsentReviewControllerDelegate>)delegate requiresScrollToBottom:(BOOL)requiresScrollToBottom {
     self = [super init];
     if (self) {
         _htmlString = html;
@@ -59,9 +61,11 @@
 
         _disagree = [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_DISAGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];
         _agree = [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_AGREE", nil) style:UIBarButtonItemStylePlain target:self action:@selector(ack)];
-        self.toolbarItems = @[_disagree,
-                             [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-                             _agree];
+        _next = [[UIBarButtonItem alloc] initWithTitle:ORKLocalizedString(@"BUTTON_NEXT", nil) style:UIBarButtonItemStylePlain target:self action:@selector(next)];
+
+        _requiresScrollToBottom = requiresScrollToBottom;
+
+        self.requiresAgreement = true; // default value
     }
     return self;
 }
@@ -70,6 +74,16 @@
     [super viewDidLoad];
     
     _toolbar = [[UIToolbar alloc] init];
+
+    if (self.requiresAgreement) {
+        self.toolbarItems = @[_disagree,
+                              [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                              _agree];
+    } else {
+        self.toolbarItems = @[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                              _next];
+    }
+
     _toolbar.items = self.toolbarItems;
     
     self.view.backgroundColor = ORKColor(ORKBackgroundColorKey);
@@ -93,13 +107,14 @@
     
     [self setUpStaticConstraints];
 
-    // Only enable "Agree" after scrolling to bottom
     _webView.scrollView.delegate = self;
-    _agree.enabled = false;
+    _agree.enabled = !_requiresScrollToBottom;
+    _next.enabled = !_requiresScrollToBottom;
 }
 
 - (void)enableToolbar {
     _agree.enabled = true;
+    _next.enabled = true;
 }
 
 - (void)updateLayoutMargins {
@@ -161,6 +176,12 @@
 - (void)doAck {
     if (self.delegate && [self.delegate respondsToSelector:@selector(consentReviewControllerDidAcknowledge:)]) {
         [self.delegate consentReviewControllerDidAcknowledge:self];
+    }
+}
+
+- (void)next {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(consentReviewControllerDidContinue:)]) {
+        [self.delegate consentReviewControllerDidContinue:self];
     }
 }
 
