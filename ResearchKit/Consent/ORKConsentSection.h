@@ -179,6 +179,12 @@ ORK_CLASS_AVAILABLE
 @property (nonatomic, copy, nullable) NSString *formalTitle;
 
 /**
+ The continue button title, to be shown on the continue button.
+ This overrides anything set in the VisualConsentStepViewController if non-nil
+ */
+@property (nonatomic, copy, nullable) NSString *continueButtonTitle;
+
+/**
  A short summary of the content in a localized string.
  
  The summary is displayed as description text in the animated consent sequence.
