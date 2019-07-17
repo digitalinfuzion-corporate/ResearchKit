@@ -40,19 +40,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)consentReviewControllerDidAcknowledge:(ORKConsentReviewController *)consentReviewController;
 - (void)consentReviewControllerDidCancel:(ORKConsentReviewController *)consentReviewController;
+- (void)consentReviewControllerDidContinue:(ORKConsentReviewController *)consentReviewController;
 
 @end
 
 
 @interface ORKConsentReviewController : UIViewController
 
-- (instancetype)initWithHTML:(NSString *)html delegate:(id<ORKConsentReviewControllerDelegate>)delegate;
+- (instancetype)initWithHTML:(NSString *)html delegate:(id<ORKConsentReviewControllerDelegate>)delegate requiresScrollToBottom:(BOOL)requiresScrollToBottom;
 
 @property (nonatomic, strong, nullable) UIWebView *webView;
 
 @property (nonatomic, weak, nullable) id<ORKConsentReviewControllerDelegate> delegate;
 
 @property (nonatomic, strong, nullable) NSString *localizedReasonForConsent;
+
+@property (nonatomic) BOOL requiresAgreement;
 
 @end
 
